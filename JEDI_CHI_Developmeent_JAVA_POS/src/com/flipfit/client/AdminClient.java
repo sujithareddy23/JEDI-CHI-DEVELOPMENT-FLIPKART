@@ -1,5 +1,7 @@
 package com.flipfit.client;
 
+import java.util.Scanner;
+
 public class AdminClient {
 	
 	public void approveGymCentre() {
@@ -18,6 +20,9 @@ public class AdminClient {
 		
 	}
 	public void viewAllGymOwners() {
+		
+	}
+	public void AdminPage(Scanner in) {
 		
 	}
 
