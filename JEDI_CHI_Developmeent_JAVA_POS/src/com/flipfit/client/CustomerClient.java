@@ -17,8 +17,4 @@ public class CustomerClient {
         System.out.println("3. Logout");
     }
 
-	public void customerRegistration1(Scanner in) {
-		// TODO Auto-generated method stub
-		
-	}
 }
