@@ -2,6 +2,7 @@ package com.flipfit.client;
 
 import java.util.Scanner;
 
+
 public class GymApplicationClient {
 
     public static void main(String[] args) {
@@ -12,7 +13,6 @@ public class GymApplicationClient {
         Scanner in = new Scanner(System.in);
         int mainChoice;
 
-        
         do {
             System.out.println("\n--- Welcome to the Flipfit Application for GYM ---");
             System.out.println("1. Login");
@@ -30,8 +30,7 @@ public class GymApplicationClient {
                 CustomerClient customer = new CustomerClient();
                 customer.customerRegistration(in); 
             } else if (mainChoice == 3) {
-
-            	GymOwnerClient gymOwner = new GymOwnerClient();
+                GymOwnerClient gymOwner = new GymOwnerClient();
                 System.out.print("Enter your email to register: ");
                 String email = in.next();
                 gymOwner.registerGymOwner(in, email);
@@ -44,7 +43,6 @@ public class GymApplicationClient {
             }
 
         } while (mainChoice != 5);
-        
         in.close();
     }
 
@@ -59,20 +57,25 @@ public class GymApplicationClient {
         int roleChoice = in.nextInt();
 
         switch (roleChoice) {
-        case 1:
-            System.out.println("Welcome Admin: " + username);
-            AdminClient admin = new AdminClient(); 
-            admin.AdminPage(in);
-            break;
-        case 2:
-            System.out.println("Welcome Customer: " + username);
-            CustomerClient customer = new CustomerClient(); 
-            break;
-        case 3:
-            System.out.println("Welcome Owner: " + username);
-            GymOwnerClient gymOwner = new GymOwnerClient(); 
-          
-            break;
+            case 1:
+                System.out.println("Welcome Admin: " + username);
+                AdminClient admin = new AdminClient(); 
+                admin.AdminPage(in);
+                break;
+            case 2:
+                System.out.println("Welcome Customer: " + username);
+                CustomerClient customer = new CustomerClient();
+                customer.customerMenu(in);
+                break;
+            case 3:
+                System.out.println("Welcome Owner: " + username);
+                GymOwnerClient gymOwner = new GymOwnerClient();
+                System.out.print("Enter email to access your profile: ");
+                String ownerEmail = in.next();
+                gymOwner.gymOwnerPage(in, ownerEmail);
+                break;
+            default:
+                System.out.println("Invalid Role Selection.");
         }
     }
 }
