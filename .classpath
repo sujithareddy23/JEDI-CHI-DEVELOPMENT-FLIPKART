@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="com.flipfit.business/src"/>
+	<classpathentry kind="src" path="demo_sts_javaproject/src"/>
+	<classpathentry kind="src" path="JEDI_CHI_Developmeent_JAVA_POS/src"/>
+	<classpathentry kind="output" path="JEDI_CHI_Developmeent_JAVA_POS/bin"/>
+</classpath>
