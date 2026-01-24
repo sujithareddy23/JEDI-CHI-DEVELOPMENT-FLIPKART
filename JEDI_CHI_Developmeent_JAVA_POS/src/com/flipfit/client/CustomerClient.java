@@ -13,6 +13,9 @@ import com.flipfit.business.GymCustomerInterface;
 import com.flipfit.business.NotificationImpl;
 import com.flipfit.constants.DemoDataConstants;
 import com.flipfit.constants.FormatConstants;
+import com.flipfit.validation.CustomerValidation;
+import com.flipfit.validation.InputValidation;
+import com.flipfit.validation.ValidationResult;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -47,6 +50,11 @@ public class CustomerClient {
         c.setPassword(password);
         c.setMobileNo(mobile);
         c.setAddress(address);
+        ValidationResult vr = CustomerValidation.validateForSignUp(c);
+        if (!vr.isValid()) {
+            System.out.println("Validation failed: " + vr.getMessage());
+            return;
+        }
         if (customerService.signUp(c)) {
             System.out.println("Registration successful. You can now login with email: " + email);
         } else {
@@ -129,13 +137,12 @@ public class CustomerClient {
         String gymId = in.next().trim();
         System.out.print("Date (" + FormatConstants.DATE_PATTERN + "): ");
         String dateStr = in.next().trim();
-        LocalDate date;
-        try {
-            date = LocalDate.parse(dateStr, DATE_FMT);
-        } catch (Exception e) {
-            System.out.println("Invalid date. Use " + FormatConstants.DATE_PATTERN + ".");
+        ValidationResult dr = InputValidation.validateDate(dateStr);
+        if (!dr.isValid()) {
+            System.out.println(dr.getFirstError());
             return;
         }
+        LocalDate date = LocalDate.parse(dateStr, DATE_FMT);
         GymCenterInterface gci = new GymCenterImpl();
         Map<Slot, Integer> avail = gci.getSlotAvailabilityForDate(gymId, date);
         if (avail.isEmpty()) {
@@ -154,15 +161,13 @@ public class CustomerClient {
     private void bookSlot(Scanner in, String customerId) {
         System.out.print("Slot ID (e.g. " + DemoDataConstants.SLOT_ID_EXAMPLE + "): ");
         String slotId = in.next().trim();
+        ValidationResult sr = InputValidation.isNotBlank(slotId, "Slot ID");
+        if (!sr.isValid()) { System.out.println(sr.getFirstError()); return; }
         System.out.print("Date (" + FormatConstants.DATE_PATTERN + "): ");
         String dateStr = in.next().trim();
-        LocalDate date;
-        try {
-            date = LocalDate.parse(dateStr, DATE_FMT);
-        } catch (Exception e) {
-            System.out.println("Invalid date. Use " + FormatConstants.DATE_PATTERN + ".");
-            return;
-        }
+        ValidationResult dr = InputValidation.validateDateNotInPast(dateStr);
+        if (!dr.isValid()) { System.out.println(dr.getFirstError()); return; }
+        LocalDate date = LocalDate.parse(dateStr, DATE_FMT);
         Booking b = customerService.bookSlot(customerId, slotId, date);
         if (b == null) {
             System.out.println("Booking failed. Invalid slot or error.");
@@ -191,13 +196,9 @@ public class CustomerClient {
     private void viewPlanByDay(Scanner in, String customerId) {
         System.out.print("Date (" + FormatConstants.DATE_PATTERN + "): ");
         String dateStr = in.next().trim();
-        LocalDate date;
-        try {
-            date = LocalDate.parse(dateStr, DATE_FMT);
-        } catch (Exception e) {
-            System.out.println("Invalid date. Use " + FormatConstants.DATE_PATTERN + ".");
-            return;
-        }
+        ValidationResult dr = InputValidation.validateDate(dateStr);
+        if (!dr.isValid()) { System.out.println(dr.getFirstError()); return; }
+        LocalDate date = LocalDate.parse(dateStr, DATE_FMT);
         List<Booking> list = customerService.viewBookingsByDay(customerId, date);
         if (list.isEmpty()) {
             System.out.println("No bookings for " + date + ".");
@@ -228,15 +229,12 @@ public class CustomerClient {
         String dateStr = in.next().trim();
         System.out.print("After time (" + FormatConstants.TIME_PATTERN + ", e.g. 07:00): ");
         String timeStr = in.next().trim();
-        LocalDate date;
-        LocalTime after;
-        try {
-            date = LocalDate.parse(dateStr, DATE_FMT);
-            after = LocalTime.parse(timeStr, TIME_FMT);
-        } catch (Exception e) {
-            System.out.println("Invalid date or time.");
-            return;
-        }
+        ValidationResult dr = InputValidation.validateDate(dateStr);
+        if (!dr.isValid()) { System.out.println(dr.getFirstError()); return; }
+        ValidationResult tr = InputValidation.validateTime(timeStr);
+        if (!tr.isValid()) { System.out.println(tr.getFirstError()); return; }
+        LocalDate date = LocalDate.parse(dateStr, DATE_FMT);
+        LocalTime after = LocalTime.parse(timeStr, TIME_FMT);
         Slot s = customerService.findNearestAvailableSlot(customerId, gymId, date, after);
         if (s == null) {
             System.out.println("No available slot found.");
@@ -264,6 +262,11 @@ public class CustomerClient {
         String mobile = in.nextLine().trim();
         System.out.print("Address (leave blank to skip): ");
         String address = in.nextLine().trim();
+        ValidationResult vr = CustomerValidation.validateForProfileUpdate(name, mobile, address);
+        if (!vr.isValid()) {
+            System.out.println("Validation failed: " + vr.getMessage());
+            return;
+        }
         customerService.modifyProfile(customerId, name.isEmpty() ? null : name,
             mobile.isEmpty() ? null : mobile, address.isEmpty() ? null : address);
         System.out.println("Profile updated.");

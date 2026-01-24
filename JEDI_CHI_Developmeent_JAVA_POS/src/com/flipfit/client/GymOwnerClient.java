@@ -8,6 +8,9 @@ import com.flipfit.business.GymOwnerInterface;
 import com.flipfit.constants.DemoDataConstants;
 import com.flipfit.constants.IdPrefixConstants;
 import com.flipfit.data.DataStore;
+import com.flipfit.validation.GymCenterValidation;
+import com.flipfit.validation.OwnerValidation;
+import com.flipfit.validation.ValidationResult;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -33,7 +36,12 @@ public class GymOwnerClient {
         o.setEmailId(email);
         o.setPassword(password);
         o.setPanNo(pan);
-        o.setGstNo(gst);
+        o.setGstNo(gst == null ? "" : gst);
+        ValidationResult vr = OwnerValidation.validateForSignUp(o);
+        if (!vr.isValid()) {
+            System.out.println("Validation failed: " + vr.getMessage());
+            return;
+        }
         if (ownerService.registerOwner(o)) {
             System.out.println("Registration request sent. Awaiting Admin validation.");
         } else {
@@ -114,6 +122,11 @@ public class GymOwnerClient {
         g.setOwnerId(ownerId);
         List<Slot> slots = createDefaultSlots(gymId, 5);
         g.setSlotList(slots);
+        ValidationResult vr = GymCenterValidation.validateForRegistration(g);
+        if (!vr.isValid()) {
+            System.out.println("Validation failed: " + vr.getMessage());
+            return;
+        }
         ownerService.registerGym(g);
         System.out.println("Gym registered. Pending Admin validation.");
     }
@@ -166,6 +179,11 @@ public class GymOwnerClient {
         String name = in.nextLine().trim();
         System.out.print("New password (blank to skip): ");
         String pwd = in.nextLine().trim();
+        ValidationResult vr = OwnerValidation.validateForProfileUpdate(name, pwd);
+        if (!vr.isValid()) {
+            System.out.println("Validation failed: " + vr.getMessage());
+            return;
+        }
         GymOwner o = new GymOwner();
         o.setEmailId(ownerEmail);
         if (!name.isEmpty()) o.setOwnerName(name);

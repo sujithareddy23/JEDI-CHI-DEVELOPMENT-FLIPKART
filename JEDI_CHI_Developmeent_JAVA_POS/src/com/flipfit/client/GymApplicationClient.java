@@ -3,6 +3,8 @@ package com.flipfit.client;
 import com.flipfit.business.UserServiceImpl;
 import com.flipfit.business.UserServiceInterface;
 import com.flipfit.constants.RoleConstants;
+import com.flipfit.validation.InputValidation;
+import com.flipfit.validation.ValidationResult;
 
 import java.util.Scanner;
 
@@ -46,8 +48,9 @@ public class GymApplicationClient {
                     GymOwnerClient gymOwner = new GymOwnerClient();
                     System.out.print("Enter your email to register: ");
                     String email = in.nextLine().trim();
-                    if (email.isEmpty()) {
-                        System.out.println("Email cannot be empty.");
+                    ValidationResult er = InputValidation.validateEmail(email);
+                    if (!er.isValid()) {
+                        System.out.println(er.getFirstError());
                         break;
                     }
                     gymOwner.registerGymOwner(in, email);
@@ -71,14 +74,15 @@ public class GymApplicationClient {
         String username = in.nextLine().trim();
         System.out.print("Password: ");
         String password = in.nextLine().trim();
+        ValidationResult ur = InputValidation.isNotBlank(username, "Username");
+        if (!ur.isValid()) { System.out.println(ur.getFirstError()); return; }
+        ValidationResult pr = InputValidation.isNotBlank(password, "Password");
+        if (!pr.isValid()) { System.out.println(pr.getFirstError()); return; }
         System.out.println("Select Role: 1. GymAdmin 2. GymCustomer 3. GymOwner");
         int roleChoice = readInt(in);
         consumeLine(in);
-
-        if (roleChoice < 1 || roleChoice > 3) {
-            System.out.println("Invalid Role Selection.");
-            return;
-        }
+        ValidationResult rr = InputValidation.validateRoleChoice(roleChoice);
+        if (!rr.isValid()) { System.out.println(rr.getFirstError()); return; }
 
         UserServiceInterface userService = new UserServiceImpl();
         String role = userService.authenticate(username, password);

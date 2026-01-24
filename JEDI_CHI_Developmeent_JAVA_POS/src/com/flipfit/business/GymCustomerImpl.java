@@ -7,6 +7,8 @@ import com.flipfit.bean.GymCustomer;
 import com.flipfit.bean.Slot;
 import com.flipfit.constants.IdPrefixConstants;
 import com.flipfit.data.DataStore;
+import com.flipfit.validation.CustomerValidation;
+import com.flipfit.validation.ValidationResult;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,7 +21,8 @@ public class GymCustomerImpl implements GymCustomerInterface {
 
     @Override
     public boolean signUp(GymCustomer customer) {
-        if (customer == null || customer.getEmail() == null) return false;
+        ValidationResult vr = CustomerValidation.validateForSignUp(customer);
+        if (!vr.isValid()) return false;
         if (DataStore.getCustomers().containsKey(customer.getEmail())) return false;
         String id = IdPrefixConstants.CUSTOMER_PREFIX + (DataStore.getCustomers().size() + 1);
         customer.setId(id);

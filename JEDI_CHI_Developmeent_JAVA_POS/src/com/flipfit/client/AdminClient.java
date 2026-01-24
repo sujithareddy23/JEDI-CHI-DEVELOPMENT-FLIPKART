@@ -4,6 +4,8 @@ import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.GymOwner;
 import com.flipfit.business.GymAdminImpl;
 import com.flipfit.business.GymAdminInterface;
+import com.flipfit.validation.GymCenterValidation;
+import com.flipfit.validation.ValidationResult;
 
 import java.util.List;
 import java.util.Scanner;
@@ -114,6 +116,8 @@ public class AdminClient {
     private void validateGym(Scanner in) {
         System.out.print("Gym ID to validate: ");
         String gymId = in.next().trim();
+        ValidationResult vr = GymCenterValidation.validateGymId(gymId);
+        if (!vr.isValid()) { System.out.println(vr.getFirstError()); return; }
         adminService.validateGym(gymId);
         System.out.println("Gym " + gymId + " validated.");
     }
@@ -121,6 +125,8 @@ public class AdminClient {
     private void withdrawPermission(Scanner in) {
         System.out.print("Gym ID to withdraw permission: ");
         String gymId = in.next().trim();
+        ValidationResult vr = GymCenterValidation.validateGymId(gymId);
+        if (!vr.isValid()) { System.out.println(vr.getFirstError()); return; }
         adminService.withdrawPermission(gymId);
         System.out.println("Permission withdrawn for " + gymId + ".");
     }
