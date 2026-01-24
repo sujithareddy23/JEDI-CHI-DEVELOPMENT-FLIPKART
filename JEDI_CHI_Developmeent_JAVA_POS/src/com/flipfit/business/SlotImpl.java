@@ -4,6 +4,7 @@ import com.flipfit.bean.Booking;
 import com.flipfit.bean.BookingStatus;
 import com.flipfit.bean.Slot;
 import com.flipfit.data.DataStore;
+import com.flipfit.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -15,7 +16,6 @@ public class SlotImpl implements SlotInterface {
     @Override
     public boolean isSlotAvailable(String slotId, LocalDate date) {
         Slot s = getSlot(slotId);
-        if (s == null) return false;
         int booked = getBookedCount(slotId, date);
         return booked < s.getTotalCapacity();
     }
@@ -48,6 +48,6 @@ public class SlotImpl implements SlotInterface {
                 if (slotId.equals(s.getSlotId())) return s;
             }
         }
-        return null;
+        throw new NotFoundException("Slot not found: " + slotId);
     }
 }

@@ -13,6 +13,10 @@ import com.flipfit.business.GymCustomerInterface;
 import com.flipfit.business.NotificationImpl;
 import com.flipfit.constants.DemoDataConstants;
 import com.flipfit.constants.FormatConstants;
+import com.flipfit.exception.AlreadyExistsException;
+import com.flipfit.exception.BookingException;
+import com.flipfit.exception.NotFoundException;
+import com.flipfit.exception.ValidationException;
 import com.flipfit.validation.CustomerValidation;
 import com.flipfit.validation.InputValidation;
 import com.flipfit.validation.ValidationResult;
@@ -50,15 +54,11 @@ public class CustomerClient {
         c.setPassword(password);
         c.setMobileNo(mobile);
         c.setAddress(address);
-        ValidationResult vr = CustomerValidation.validateForSignUp(c);
-        if (!vr.isValid()) {
-            System.out.println("Validation failed: " + vr.getMessage());
-            return;
-        }
-        if (customerService.signUp(c)) {
+        try {
+            customerService.signUp(c);
             System.out.println("Registration successful. You can now login with email: " + email);
-        } else {
-            System.out.println("Registration failed. Email may already exist.");
+        } catch (ValidationException | AlreadyExistsException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -168,15 +168,15 @@ public class CustomerClient {
         ValidationResult dr = InputValidation.validateDateNotInPast(dateStr);
         if (!dr.isValid()) { System.out.println(dr.getFirstError()); return; }
         LocalDate date = LocalDate.parse(dateStr, DATE_FMT);
-        Booking b = customerService.bookSlot(customerId, slotId, date);
-        if (b == null) {
-            System.out.println("Booking failed. Invalid slot or error.");
-            return;
-        }
-        if (b.getStatus() == BookingStatus.WAITLISTED) {
-            System.out.println("Slot is full. You have been added to the waitlist. Booking ID: " + b.getId());
-        } else {
-            System.out.println("Booked successfully. Booking ID: " + b.getId());
+        try {
+            Booking b = customerService.bookSlot(customerId, slotId, date);
+            if (b.getStatus() == BookingStatus.WAITLISTED) {
+                System.out.println("Slot is full. You have been added to the waitlist. Booking ID: " + b.getId());
+            } else {
+                System.out.println("Booked successfully. Booking ID: " + b.getId());
+            }
+        } catch (NotFoundException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -215,10 +215,11 @@ public class CustomerClient {
         viewBookings(customerId);
         System.out.print("Booking ID to cancel: ");
         String bid = in.next().trim();
-        if (customerService.cancelBooking(customerId, bid)) {
+        try {
+            customerService.cancelBooking(customerId, bid);
             System.out.println("Booking cancelled.");
-        } else {
-            System.out.println("Booking not found or you cannot cancel it.");
+        } catch (NotFoundException | BookingException e) {
+            System.out.println(e.getMessage());
         }
     }
 

@@ -6,7 +6,7 @@ import com.flipfit.bean.Slot;
 import java.util.List;
 
 public interface GymOwnerInterface {
-    boolean registerOwner(GymOwner owner);
+    void registerOwner(GymOwner owner);
     void registerGym(GymCenter gym);
     void updateSlots(String gymId, List<Slot> slots);
     void modifyOwnerProfile(GymOwner owner);

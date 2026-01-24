@@ -5,6 +5,8 @@ import com.flipfit.bean.GymOwner;
 import com.flipfit.bean.Slot;
 import com.flipfit.constants.IdPrefixConstants;
 import com.flipfit.data.DataStore;
+import com.flipfit.exception.AlreadyExistsException;
+import com.flipfit.exception.ValidationException;
 import com.flipfit.validation.OwnerValidation;
 import com.flipfit.validation.GymCenterValidation;
 import com.flipfit.validation.ValidationResult;
@@ -15,20 +17,21 @@ import java.util.List;
 public class GymOwnerImpl implements GymOwnerInterface {
 
     @Override
-    public boolean registerOwner(GymOwner owner) {
+    public void registerOwner(GymOwner owner) {
         ValidationResult vr = OwnerValidation.validateForSignUp(owner);
-        if (!vr.isValid()) return false;
-        if (DataStore.getOwners().containsKey(owner.getEmailId())) return false;
+        if (!vr.isValid()) throw new ValidationException(vr.getMessage());
+        if (DataStore.getOwners().containsKey(owner.getEmailId())) {
+            throw new AlreadyExistsException("Email already registered.");
+        }
         owner.setValidated(false);
         if (owner.getId() == null) owner.setId(IdPrefixConstants.OWNER_PREFIX + (DataStore.getOwners().size() + 1));
         DataStore.getOwnersMutable().put(owner.getEmailId(), owner);
-        return true;
     }
 
     @Override
     public void registerGym(GymCenter gym) {
         ValidationResult vr = GymCenterValidation.validateForRegistration(gym);
-        if (!vr.isValid()) return;
+        if (!vr.isValid()) throw new ValidationException(vr.getMessage());
         gym.setValidated(false);
         DataStore.getCentersMutable().put(gym.getGymId(), gym);
         if (gym.getSlotList() != null) {

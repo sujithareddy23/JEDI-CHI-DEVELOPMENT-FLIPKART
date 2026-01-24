@@ -6,6 +6,7 @@ import com.flipfit.bean.Notification;
 import com.flipfit.bean.Slot;
 import com.flipfit.constants.MessageConstants;
 import com.flipfit.data.DataStore;
+import com.flipfit.exception.NotFoundException;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -19,7 +20,6 @@ public class BookingImpl implements BookingInterface {
     @Override
     public Booking bookSlot(String customerId, String slotId, LocalDate date) {
         Slot s = slotService.getSlot(slotId);
-        if (s == null) return null;
         String gymId = s.getGymId();
         int booked = slotService.getBookedCount(slotId, date);
         if (booked >= s.getTotalCapacity()) {
@@ -58,7 +58,6 @@ public class BookingImpl implements BookingInterface {
     @Override
     public void cancelBooking(String bookingId) {
         Booking b = getBooking(bookingId);
-        if (b == null) return;
         b.setStatus(BookingStatus.CANCELLED);
         promoteFirstWaitlisted(b.getSlotId(), b.getBookingDate());
     }
@@ -116,15 +115,14 @@ public class BookingImpl implements BookingInterface {
         for (Booking b : DataStore.getBookings()) {
             if (bookingId.equals(b.getId())) return b;
         }
-        return null;
+        throw new NotFoundException("Booking not found: " + bookingId);
     }
 
     /**
-     * Add to waitlist when slot is full. Returns the waitlisted booking or null.
+     * Add to waitlist when slot is full. Returns the waitlisted booking.
      */
     public Booking addToWaitlist(String customerId, String slotId, LocalDate date) {
         Slot s = slotService.getSlot(slotId);
-        if (s == null) return null;
         Booking b = new Booking();
         b.setId(DataStore.nextBookingId());
         b.setCustomerId(customerId);

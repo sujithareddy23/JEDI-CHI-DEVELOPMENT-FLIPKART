@@ -3,6 +3,7 @@ package com.flipfit.client;
 import com.flipfit.business.UserServiceImpl;
 import com.flipfit.business.UserServiceInterface;
 import com.flipfit.constants.RoleConstants;
+import com.flipfit.exception.InvalidCredentialsException;
 import com.flipfit.validation.InputValidation;
 import com.flipfit.validation.ValidationResult;
 
@@ -84,24 +85,19 @@ public class GymApplicationClient {
         ValidationResult rr = InputValidation.validateRoleChoice(roleChoice);
         if (!rr.isValid()) { System.out.println(rr.getFirstError()); return; }
 
-        UserServiceInterface userService = new UserServiceImpl();
-        String role = userService.authenticate(username, password);
-        String userId = userService.getLoggedInUserId();
+        try {
+            UserServiceInterface userService = new UserServiceImpl();
+            String role = userService.authenticate(username, password);
+            String userId = userService.getLoggedInUserId();
 
-        if (role == null || userId == null) {
-            System.out.println("Invalid credentials.");
-            return;
-        }
+            boolean roleMatches = (roleChoice == 1 && RoleConstants.ADMIN.equals(role))
+                    || (roleChoice == 2 && RoleConstants.CUSTOMER.equals(role))
+                    || (roleChoice == 3 && RoleConstants.OWNER.equals(role));
+            if (!roleMatches) {
+                throw new InvalidCredentialsException("Credentials do not match selected role.");
+            }
 
-        boolean roleMatches = (roleChoice == 1 && RoleConstants.ADMIN.equals(role))
-                || (roleChoice == 2 && RoleConstants.CUSTOMER.equals(role))
-                || (roleChoice == 3 && RoleConstants.OWNER.equals(role));
-        if (!roleMatches) {
-            System.out.println("Credentials do not match selected role.");
-            return;
-        }
-
-        switch (role) {
+            switch (role) {
             case RoleConstants.ADMIN:
                 System.out.println("Welcome Admin: " + userId);
                 AdminClient admin = new AdminClient();
@@ -119,6 +115,9 @@ public class GymApplicationClient {
                 break;
             default:
                 System.out.println("Unknown role.");
+            }
+        } catch (InvalidCredentialsException e) {
+            System.out.println(e.getMessage());
         }
     }
 

@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Map;
 
 public interface GymCustomerInterface {
-    boolean signUp(GymCustomer customer);
+    void signUp(GymCustomer customer);
     boolean signIn(String email, String password);
     List<GymCenter> searchGymsByCity(String city);
     Booking bookSlot(String customerId, String slotId, LocalDate date);
     List<Booking> viewBookings(String customerId);
     List<Booking> viewBookingsByDay(String customerId, LocalDate date);
-    boolean cancelBooking(String customerId, String bookingId);
+    void cancelBooking(String customerId, String bookingId);
     Slot findNearestAvailableSlot(String customerId, String gymId, LocalDate date, java.time.LocalTime after);
     void modifyProfile(String customerId, String name, String mobile, String address);
 }

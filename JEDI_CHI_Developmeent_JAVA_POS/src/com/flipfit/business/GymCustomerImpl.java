@@ -7,6 +7,9 @@ import com.flipfit.bean.GymCustomer;
 import com.flipfit.bean.Slot;
 import com.flipfit.constants.IdPrefixConstants;
 import com.flipfit.data.DataStore;
+import com.flipfit.exception.AlreadyExistsException;
+import com.flipfit.exception.BookingException;
+import com.flipfit.exception.ValidationException;
 import com.flipfit.validation.CustomerValidation;
 import com.flipfit.validation.ValidationResult;
 
@@ -20,14 +23,15 @@ public class GymCustomerImpl implements GymCustomerInterface {
     private final SlotImpl slotService = new SlotImpl();
 
     @Override
-    public boolean signUp(GymCustomer customer) {
+    public void signUp(GymCustomer customer) {
         ValidationResult vr = CustomerValidation.validateForSignUp(customer);
-        if (!vr.isValid()) return false;
-        if (DataStore.getCustomers().containsKey(customer.getEmail())) return false;
+        if (!vr.isValid()) throw new ValidationException(vr.getMessage());
+        if (DataStore.getCustomers().containsKey(customer.getEmail())) {
+            throw new AlreadyExistsException("Email already registered.");
+        }
         String id = IdPrefixConstants.CUSTOMER_PREFIX + (DataStore.getCustomers().size() + 1);
         customer.setId(id);
         DataStore.getCustomersMutable().put(customer.getEmail(), customer);
-        return true;
     }
 
     @Override
@@ -44,7 +48,6 @@ public class GymCustomerImpl implements GymCustomerInterface {
     @Override
     public Booking bookSlot(String customerId, String slotId, LocalDate date) {
         Slot s = slotService.getSlot(slotId);
-        if (s == null) return null;
         boolean available = slotService.isSlotAvailable(slotId, date);
         if (available) {
             return bookingService.bookSlot(customerId, slotId, date);
@@ -63,11 +66,12 @@ public class GymCustomerImpl implements GymCustomerInterface {
     }
 
     @Override
-    public boolean cancelBooking(String customerId, String bookingId) {
+    public void cancelBooking(String customerId, String bookingId) {
         Booking b = bookingService.getBooking(bookingId);
-        if (b == null || !customerId.equals(b.getCustomerId())) return false;
+        if (!customerId.equals(b.getCustomerId())) {
+            throw new BookingException("Cannot cancel: not your booking.");
+        }
         bookingService.cancelBooking(bookingId);
-        return true;
     }
 
     @Override

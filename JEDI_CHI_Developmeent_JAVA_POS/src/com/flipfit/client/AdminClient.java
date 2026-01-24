@@ -4,6 +4,7 @@ import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.GymOwner;
 import com.flipfit.business.GymAdminImpl;
 import com.flipfit.business.GymAdminInterface;
+import com.flipfit.exception.NotFoundException;
 import com.flipfit.validation.GymCenterValidation;
 import com.flipfit.validation.ValidationResult;
 
@@ -118,8 +119,12 @@ public class AdminClient {
         String gymId = in.next().trim();
         ValidationResult vr = GymCenterValidation.validateGymId(gymId);
         if (!vr.isValid()) { System.out.println(vr.getFirstError()); return; }
-        adminService.validateGym(gymId);
-        System.out.println("Gym " + gymId + " validated.");
+        try {
+            adminService.validateGym(gymId);
+            System.out.println("Gym " + gymId + " validated.");
+        } catch (NotFoundException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void withdrawPermission(Scanner in) {
@@ -127,8 +132,12 @@ public class AdminClient {
         String gymId = in.next().trim();
         ValidationResult vr = GymCenterValidation.validateGymId(gymId);
         if (!vr.isValid()) { System.out.println(vr.getFirstError()); return; }
-        adminService.withdrawPermission(gymId);
-        System.out.println("Permission withdrawn for " + gymId + ".");
+        try {
+            adminService.withdrawPermission(gymId);
+            System.out.println("Permission withdrawn for " + gymId + ".");
+        } catch (NotFoundException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void searchGyms(Scanner in) {

@@ -3,6 +3,7 @@ package com.flipfit.business;
 import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.GymOwner;
 import com.flipfit.data.DataStore;
+import com.flipfit.exception.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,15 +13,17 @@ public class GymAdminImpl implements GymAdminInterface {
     @Override
     public void validateGym(String gymId) {
         GymCenter g = DataStore.getCenters().get(gymId);
-        if (g != null) g.setValidated(true);
-        GymOwner o = ownerById(g != null ? g.getOwnerId() : null);
+        if (g == null) throw new NotFoundException("Gym not found: " + gymId);
+        g.setValidated(true);
+        GymOwner o = ownerById(g.getOwnerId());
         if (o != null) o.setValidated(true);
     }
 
     @Override
     public void withdrawPermission(String gymId) {
         GymCenter g = DataStore.getCenters().get(gymId);
-        if (g != null) g.setValidated(false);
+        if (g == null) throw new NotFoundException("Gym not found: " + gymId);
+        g.setValidated(false);
     }
 
     @Override

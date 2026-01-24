@@ -8,7 +8,8 @@ import com.flipfit.business.GymOwnerInterface;
 import com.flipfit.constants.DemoDataConstants;
 import com.flipfit.constants.IdPrefixConstants;
 import com.flipfit.data.DataStore;
-import com.flipfit.validation.GymCenterValidation;
+import com.flipfit.exception.AlreadyExistsException;
+import com.flipfit.exception.ValidationException;
 import com.flipfit.validation.OwnerValidation;
 import com.flipfit.validation.ValidationResult;
 
@@ -37,15 +38,11 @@ public class GymOwnerClient {
         o.setPassword(password);
         o.setPanNo(pan);
         o.setGstNo(gst == null ? "" : gst);
-        ValidationResult vr = OwnerValidation.validateForSignUp(o);
-        if (!vr.isValid()) {
-            System.out.println("Validation failed: " + vr.getMessage());
-            return;
-        }
-        if (ownerService.registerOwner(o)) {
+        try {
+            ownerService.registerOwner(o);
             System.out.println("Registration request sent. Awaiting Admin validation.");
-        } else {
-            System.out.println("Email already registered.");
+        } catch (ValidationException | AlreadyExistsException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -122,13 +119,12 @@ public class GymOwnerClient {
         g.setOwnerId(ownerId);
         List<Slot> slots = createDefaultSlots(gymId, 5);
         g.setSlotList(slots);
-        ValidationResult vr = GymCenterValidation.validateForRegistration(g);
-        if (!vr.isValid()) {
-            System.out.println("Validation failed: " + vr.getMessage());
-            return;
+        try {
+            ownerService.registerGym(g);
+            System.out.println("Gym registered. Pending Admin validation.");
+        } catch (ValidationException e) {
+            System.out.println(e.getMessage());
         }
-        ownerService.registerGym(g);
-        System.out.println("Gym registered. Pending Admin validation.");
     }
 
     private List<Slot> createDefaultSlots(String gymId, int capacity) {
