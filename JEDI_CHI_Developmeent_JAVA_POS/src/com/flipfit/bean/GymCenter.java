@@ -5,10 +5,11 @@ import java.util.List;
 public class GymCenter {
     private String gymId;
     private String name;
-    private String location;
+    private String location;  // city or area, e.g. "Bangalore - Bellandur"
     private String contactNo;
+    private String ownerId;
+    private boolean validated;
     private List<Slot> slotList;
-    private List<GymCustomer> userList;
 
     public String getGymId() { return gymId; }
     public void setGymId(String gymId) { this.gymId = gymId; }
@@ -22,9 +23,12 @@ public class GymCenter {
     public String getContactNo() { return contactNo; }
     public void setContactNo(String contactNo) { this.contactNo = contactNo; }
 
+    public String getOwnerId() { return ownerId; }
+    public void setOwnerId(String ownerId) { this.ownerId = ownerId; }
+
+    public boolean isValidated() { return validated; }
+    public void setValidated(boolean validated) { this.validated = validated; }
+
     public List<Slot> getSlotList() { return slotList; }
     public void setSlotList(List<Slot> slotList) { this.slotList = slotList; }
-
-    public List<GymCustomer> getUserList() { return userList; }
-    public void setUserList(List<GymCustomer> userList) { this.userList = userList; }
 }

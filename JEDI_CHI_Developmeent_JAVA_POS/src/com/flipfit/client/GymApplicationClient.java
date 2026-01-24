@@ -1,7 +1,9 @@
 package com.flipfit.client;
 
-import java.util.Scanner;
+import com.flipfit.business.UserServiceImpl;
+import com.flipfit.business.UserServiceInterface;
 
+import java.util.Scanner;
 
 public class GymApplicationClient {
 
@@ -21,61 +23,109 @@ public class GymApplicationClient {
             System.out.println("4. Change Password");
             System.out.println("5. Exit");
             System.out.print("Select an option: ");
-            
-            mainChoice = in.nextInt();
 
-            if (mainChoice == 1) {
-                loginMenu(in);
-            } else if (mainChoice == 2) {
-                CustomerClient customer = new CustomerClient();
-                customer.customerRegistration(in); 
-            } else if (mainChoice == 3) {
-                GymOwnerClient gymOwner = new GymOwnerClient();
-                System.out.print("Enter your email to register: ");
-                String email = in.next();
-                gymOwner.registerGymOwner(in, email);
-            } else if (mainChoice == 4) {
-                System.out.println("Redirecting to Change Password...");
-            } else if (mainChoice == 5) {
-                System.out.println("Exiting Application. Thank you!");
-            } else {
-                System.out.println("Invalid selection. Please try again.");
+            mainChoice = readInt(in);
+            if (mainChoice == -1) {
+                consumeLine(in);
+                System.out.println("Invalid input.");
+                continue;
             }
+            consumeLine(in);
 
-        } while (mainChoice != 5);
-        in.close();
+            switch (mainChoice) {
+                case 1:
+                    loginMenu(in);
+                    break;
+                case 2: {
+                    CustomerClient customer = new CustomerClient();
+                    customer.customerRegistration(in);
+                    break;
+                }
+                case 3: {
+                    GymOwnerClient gymOwner = new GymOwnerClient();
+                    System.out.print("Enter your email to register: ");
+                    String email = in.nextLine().trim();
+                    if (email.isEmpty()) {
+                        System.out.println("Email cannot be empty.");
+                        break;
+                    }
+                    gymOwner.registerGymOwner(in, email);
+                    break;
+                }
+                case 4:
+                    System.out.println("Change Password – Coming soon.");
+                    break;
+                case 5:
+                    System.out.println("Exiting Application. Thank you!");
+                    return;
+                default:
+                    System.out.println("Invalid selection. Please try again.");
+            }
+        } while (true);
     }
 
     private static void loginMenu(Scanner in) {
         System.out.println("\n--- Login ---");
         System.out.print("Username: ");
-        String username = in.next();
+        String username = in.nextLine().trim();
         System.out.print("Password: ");
-        String password = in.next();
-
+        String password = in.nextLine().trim();
         System.out.println("Select Role: 1. GymAdmin 2. GymCustomer 3. GymOwner");
-        int roleChoice = in.nextInt();
+        int roleChoice = readInt(in);
+        consumeLine(in);
 
-        switch (roleChoice) {
-            case 1:
-                System.out.println("Welcome Admin: " + username);
-                AdminClient admin = new AdminClient(); 
+        if (roleChoice < 1 || roleChoice > 3) {
+            System.out.println("Invalid Role Selection.");
+            return;
+        }
+
+        UserServiceInterface userService = new UserServiceImpl();
+        String role = userService.authenticate(username, password);
+        String userId = userService.getLoggedInUserId();
+
+        if (role == null || userId == null) {
+            System.out.println("Invalid credentials.");
+            return;
+        }
+
+        boolean roleMatches = (roleChoice == 1 && "ADMIN".equals(role))
+                || (roleChoice == 2 && "CUSTOMER".equals(role))
+                || (roleChoice == 3 && "OWNER".equals(role));
+        if (!roleMatches) {
+            System.out.println("Credentials do not match selected role.");
+            return;
+        }
+
+        switch (role) {
+            case "ADMIN":
+                System.out.println("Welcome Admin: " + userId);
+                AdminClient admin = new AdminClient();
                 admin.AdminPage(in);
                 break;
-            case 2:
-                System.out.println("Welcome Customer: " + username);
+            case "CUSTOMER":
+                System.out.println("Welcome Customer: " + userId);
                 CustomerClient customer = new CustomerClient();
-                customer.customerMenu(in);
+                customer.customerMenu(in, userId);
                 break;
-            case 3:
-                System.out.println("Welcome Owner: " + username);
+            case "OWNER":
+                System.out.println("Welcome Owner: " + userId);
                 GymOwnerClient gymOwner = new GymOwnerClient();
-                System.out.print("Enter email to access your profile: ");
-                String ownerEmail = in.next();
-                gymOwner.gymOwnerPage(in, ownerEmail);
+                gymOwner.gymOwnerPage(in, userId);
                 break;
             default:
-                System.out.println("Invalid Role Selection.");
+                System.out.println("Unknown role.");
+        }
+    }
+
+    private static void consumeLine(Scanner in) {
+        if (in.hasNextLine()) in.nextLine();
+    }
+
+    private static int readInt(Scanner in) {
+        try {
+            return in.nextInt();
+        } catch (Exception e) {
+            return -1;
         }
     }
 }
