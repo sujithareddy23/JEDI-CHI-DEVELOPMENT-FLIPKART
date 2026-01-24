@@ -5,6 +5,8 @@ import com.flipfit.bean.GymOwner;
 import com.flipfit.bean.Slot;
 import com.flipfit.business.GymOwnerImpl;
 import com.flipfit.business.GymOwnerInterface;
+import com.flipfit.constants.DemoDataConstants;
+import com.flipfit.constants.IdPrefixConstants;
 import com.flipfit.data.DataStore;
 
 import java.time.LocalTime;
@@ -118,16 +120,23 @@ public class GymOwnerClient {
 
     private List<Slot> createDefaultSlots(String gymId, int capacity) {
         List<Slot> list = new ArrayList<>();
-        for (int h : new int[] { 6, 7, 8, 18, 19, 20 }) {
-            Slot s = new Slot();
-            s.setSlotId(gymId + "_" + String.format("%02d", h) + ":00");
-            s.setGymId(gymId);
-            s.setStartTime(LocalTime.of(h, 0));
-            s.setEndTime(LocalTime.of(h + 1, 0));
-            s.setTotalCapacity(capacity);
-            list.add(s);
+        for (int h = DemoDataConstants.SLOT_AM_START; h < DemoDataConstants.SLOT_AM_END; h++) {
+            list.add(createSlot(gymId, h, capacity));
+        }
+        for (int h = DemoDataConstants.SLOT_PM_START; h < DemoDataConstants.SLOT_PM_END; h++) {
+            list.add(createSlot(gymId, h, capacity));
         }
         return list;
+    }
+
+    private Slot createSlot(String gymId, int hour, int capacity) {
+        Slot s = new Slot();
+        s.setSlotId(String.format(IdPrefixConstants.SLOT_ID_FORMAT, gymId, hour));
+        s.setGymId(gymId);
+        s.setStartTime(LocalTime.of(hour, 0));
+        s.setEndTime(LocalTime.of(hour + 1, 0));
+        s.setTotalCapacity(capacity);
+        return s;
     }
 
     private void updateSlots(Scanner in) {

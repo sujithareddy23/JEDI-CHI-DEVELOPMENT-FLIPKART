@@ -3,6 +3,7 @@ package com.flipfit.business;
 import com.flipfit.bean.GymAdmin;
 import com.flipfit.bean.GymCustomer;
 import com.flipfit.bean.GymOwner;
+import com.flipfit.constants.RoleConstants;
 import com.flipfit.data.DataStore;
 
 import java.util.Map;
@@ -19,21 +20,21 @@ public class UserServiceImpl implements UserServiceInterface {
         Map<String, GymAdmin> admins = DataStore.getAdmins();
         GymAdmin a = admins.get(identifier);
         if (a != null && password.equals(a.getPassword())) {
-            lastRole = "ADMIN";
+            lastRole = RoleConstants.ADMIN;
             lastUserId = a.getAdminId();
             return lastRole;
         }
         Map<String, GymOwner> owners = DataStore.getOwners();
         GymOwner o = owners.get(identifier);
         if (o != null && password.equals(o.getPassword())) {
-            lastRole = "OWNER";
+            lastRole = RoleConstants.OWNER;
             lastUserId = o.getEmailId();
             return lastRole;
         }
         Map<String, GymCustomer> customers = DataStore.getCustomers();
         GymCustomer c = customers.get(identifier);
         if (c != null && password.equals(c.getPassword())) {
-            lastRole = "CUSTOMER";
+            lastRole = RoleConstants.CUSTOMER;
             lastUserId = c.getEmail();
             return lastRole;
         }

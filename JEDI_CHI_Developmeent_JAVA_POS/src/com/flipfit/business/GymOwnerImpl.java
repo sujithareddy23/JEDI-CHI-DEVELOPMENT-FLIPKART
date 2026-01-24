@@ -3,6 +3,7 @@ package com.flipfit.business;
 import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.GymOwner;
 import com.flipfit.bean.Slot;
+import com.flipfit.constants.IdPrefixConstants;
 import com.flipfit.data.DataStore;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class GymOwnerImpl implements GymOwnerInterface {
         if (owner == null || owner.getEmailId() == null) return false;
         if (DataStore.getOwners().containsKey(owner.getEmailId())) return false;
         owner.setValidated(false);
-        if (owner.getId() == null) owner.setId("OWN" + (DataStore.getOwners().size() + 1));
+        if (owner.getId() == null) owner.setId(IdPrefixConstants.OWNER_PREFIX + (DataStore.getOwners().size() + 1));
         DataStore.getOwnersMutable().put(owner.getEmailId(), owner);
         return true;
     }

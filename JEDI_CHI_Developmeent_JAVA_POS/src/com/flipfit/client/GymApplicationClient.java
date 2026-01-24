@@ -2,6 +2,7 @@ package com.flipfit.client;
 
 import com.flipfit.business.UserServiceImpl;
 import com.flipfit.business.UserServiceInterface;
+import com.flipfit.constants.RoleConstants;
 
 import java.util.Scanner;
 
@@ -88,26 +89,26 @@ public class GymApplicationClient {
             return;
         }
 
-        boolean roleMatches = (roleChoice == 1 && "ADMIN".equals(role))
-                || (roleChoice == 2 && "CUSTOMER".equals(role))
-                || (roleChoice == 3 && "OWNER".equals(role));
+        boolean roleMatches = (roleChoice == 1 && RoleConstants.ADMIN.equals(role))
+                || (roleChoice == 2 && RoleConstants.CUSTOMER.equals(role))
+                || (roleChoice == 3 && RoleConstants.OWNER.equals(role));
         if (!roleMatches) {
             System.out.println("Credentials do not match selected role.");
             return;
         }
 
         switch (role) {
-            case "ADMIN":
+            case RoleConstants.ADMIN:
                 System.out.println("Welcome Admin: " + userId);
                 AdminClient admin = new AdminClient();
                 admin.AdminPage(in);
                 break;
-            case "CUSTOMER":
+            case RoleConstants.CUSTOMER:
                 System.out.println("Welcome Customer: " + userId);
                 CustomerClient customer = new CustomerClient();
                 customer.customerMenu(in, userId);
                 break;
-            case "OWNER":
+            case RoleConstants.OWNER:
                 System.out.println("Welcome Owner: " + userId);
                 GymOwnerClient gymOwner = new GymOwnerClient();
                 gymOwner.gymOwnerPage(in, userId);

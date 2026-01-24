@@ -4,6 +4,7 @@ import com.flipfit.bean.Booking;
 import com.flipfit.bean.BookingStatus;
 import com.flipfit.bean.Notification;
 import com.flipfit.bean.Slot;
+import com.flipfit.constants.MessageConstants;
 import com.flipfit.data.DataStore;
 
 import java.time.Instant;
@@ -75,8 +76,7 @@ public class BookingImpl implements BookingInterface {
         if (waitlisted != null) {
             waitlisted.setStatus(BookingStatus.CONFIRMED);
             notificationService.sendNotification(waitlisted.getCustomerId(),
-                "You have been promoted from waitlist! Booking " + waitlisted.getId()
-                    + " for " + date + " slot " + slotId + " is now CONFIRMED.");
+                String.format(MessageConstants.WAITLIST_PROMOTED, waitlisted.getId(), date, slotId));
         }
     }
 

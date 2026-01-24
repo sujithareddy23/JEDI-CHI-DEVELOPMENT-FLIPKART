@@ -11,6 +11,8 @@ import com.flipfit.business.GymCenterInterface;
 import com.flipfit.business.GymCustomerImpl;
 import com.flipfit.business.GymCustomerInterface;
 import com.flipfit.business.NotificationImpl;
+import com.flipfit.constants.DemoDataConstants;
+import com.flipfit.constants.FormatConstants;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -22,7 +24,8 @@ import java.util.Scanner;
 public class CustomerClient {
     private final GymCustomerInterface customerService = new GymCustomerImpl();
     private final NotificationImpl notificationService = new NotificationImpl();
-    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ISO_LOCAL_DATE;
+    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern(FormatConstants.DATE_PATTERN);
+    private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern(FormatConstants.TIME_PATTERN);
 
     public void customerRegistration(Scanner in) {
         System.out.println("\n--- Customer Registration ---");
@@ -122,15 +125,15 @@ public class CustomerClient {
     }
 
     private void viewSlotAvailability(Scanner in) {
-        System.out.print("Gym ID (e.g. BEL, KOR, IND): ");
+        System.out.print("Gym ID (e.g. " + DemoDataConstants.GYM_ID_EXAMPLES + "): ");
         String gymId = in.next().trim();
-        System.out.print("Date (yyyy-MM-dd): ");
+        System.out.print("Date (" + FormatConstants.DATE_PATTERN + "): ");
         String dateStr = in.next().trim();
         LocalDate date;
         try {
             date = LocalDate.parse(dateStr, DATE_FMT);
         } catch (Exception e) {
-            System.out.println("Invalid date. Use yyyy-MM-dd.");
+            System.out.println("Invalid date. Use " + FormatConstants.DATE_PATTERN + ".");
             return;
         }
         GymCenterInterface gci = new GymCenterImpl();
@@ -149,15 +152,15 @@ public class CustomerClient {
     }
 
     private void bookSlot(Scanner in, String customerId) {
-        System.out.print("Slot ID (e.g. BEL_06:00): ");
+        System.out.print("Slot ID (e.g. " + DemoDataConstants.SLOT_ID_EXAMPLE + "): ");
         String slotId = in.next().trim();
-        System.out.print("Date (yyyy-MM-dd): ");
+        System.out.print("Date (" + FormatConstants.DATE_PATTERN + "): ");
         String dateStr = in.next().trim();
         LocalDate date;
         try {
             date = LocalDate.parse(dateStr, DATE_FMT);
         } catch (Exception e) {
-            System.out.println("Invalid date. Use yyyy-MM-dd.");
+            System.out.println("Invalid date. Use " + FormatConstants.DATE_PATTERN + ".");
             return;
         }
         Booking b = customerService.bookSlot(customerId, slotId, date);
@@ -186,13 +189,13 @@ public class CustomerClient {
     }
 
     private void viewPlanByDay(Scanner in, String customerId) {
-        System.out.print("Date (yyyy-MM-dd): ");
+        System.out.print("Date (" + FormatConstants.DATE_PATTERN + "): ");
         String dateStr = in.next().trim();
         LocalDate date;
         try {
             date = LocalDate.parse(dateStr, DATE_FMT);
         } catch (Exception e) {
-            System.out.println("Invalid date. Use yyyy-MM-dd.");
+            System.out.println("Invalid date. Use " + FormatConstants.DATE_PATTERN + ".");
             return;
         }
         List<Booking> list = customerService.viewBookingsByDay(customerId, date);
@@ -221,15 +224,15 @@ public class CustomerClient {
     private void findNearestSlot(Scanner in, String customerId) {
         System.out.print("Gym ID: ");
         String gymId = in.next().trim();
-        System.out.print("Date (yyyy-MM-dd): ");
+        System.out.print("Date (" + FormatConstants.DATE_PATTERN + "): ");
         String dateStr = in.next().trim();
-        System.out.print("After time (HH:mm, e.g. 07:00): ");
+        System.out.print("After time (" + FormatConstants.TIME_PATTERN + ", e.g. 07:00): ");
         String timeStr = in.next().trim();
         LocalDate date;
         LocalTime after;
         try {
             date = LocalDate.parse(dateStr, DATE_FMT);
-            after = LocalTime.parse(timeStr);
+            after = LocalTime.parse(timeStr, TIME_FMT);
         } catch (Exception e) {
             System.out.println("Invalid date or time.");
             return;

@@ -5,6 +5,7 @@ import com.flipfit.bean.BookingStatus;
 import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.GymCustomer;
 import com.flipfit.bean.Slot;
+import com.flipfit.constants.IdPrefixConstants;
 import com.flipfit.data.DataStore;
 
 import java.time.LocalDate;
@@ -20,7 +21,7 @@ public class GymCustomerImpl implements GymCustomerInterface {
     public boolean signUp(GymCustomer customer) {
         if (customer == null || customer.getEmail() == null) return false;
         if (DataStore.getCustomers().containsKey(customer.getEmail())) return false;
-        String id = "C" + (DataStore.getCustomers().size() + 1);
+        String id = IdPrefixConstants.CUSTOMER_PREFIX + (DataStore.getCustomers().size() + 1);
         customer.setId(id);
         DataStore.getCustomersMutable().put(customer.getEmail(), customer);
         return true;
