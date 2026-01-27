@@ -2,11 +2,11 @@
 
 A comprehensive Java-based gym management system that handles gym bookings, customer management, owner operations, and administrative functions with role-based access control.
 
-## 🏋️ Project Overview
+##  Project Overview
 
 FlipFit is a complete gym management solution that allows customers to book gym slots, gym owners to manage their centers, and administrators to oversee the entire system. The system features real-time notifications, waitlist management, and multi-role authentication.
 
-## 📋 Table of Contents
+##  Table of Contents
 
 - [Features](#-features)
 - [Architecture](#-architecture)
@@ -21,7 +21,7 @@ FlipFit is a complete gym management solution that allows customers to book gym 
 - [Contributing](#-contributing)
 - [License](#-license)
 
-## ✨ Features
+##  Features
 
 ### Customer Features
 - **Registration & Authentication**: Secure user registration and login system
@@ -46,7 +46,7 @@ FlipFit is a complete gym management solution that allows customers to book gym 
 - **System Monitoring**: Track system usage and statistics
 - **Data Management**: Access and manage all system data
 
-## 🏗️ Architecture
+##  Architecture
 
 ### System Architecture
 The system follows a **3-tier architecture** pattern:
@@ -73,7 +73,7 @@ The system follows a **3-tier architecture** pattern:
 - **Factory Pattern**: Service creation in client classes
 - **Observer Pattern**: Notification system for booking updates
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 src/com/flipfit/
@@ -124,7 +124,7 @@ src/com/flipfit/
     └── ValidationResult.java # Validation result wrapper
 ```
 
-## 🚀 Installation & Setup
+##  Installation & Setup
 
 ### Prerequisites
 - **Java Development Kit (JDK)**: Version 8 or higher
@@ -239,7 +239,7 @@ The system comes with pre-configured demo data:
 - **ID Generation**: Automatic unique ID generation for all entities
 - **Data Validation**: Comprehensive input validation and error handling
 
-## 📚 API Documentation
+##  API Documentation
 
 ### Service Interfaces
 
@@ -295,7 +295,7 @@ void markAsRead(String notificationId);
 - `timestamp`: Creation time
 - `read`: Read status flag
 
-## 🗄️ Database Schema
+##  Database Schema
 
 The system uses an **in-memory data store** with the following structure:
 
@@ -316,7 +316,7 @@ The system uses an **in-memory data store** with the following structure:
 - Booking 1 → 1 Slot
 - Notification 1 → 1 GymCustomer
 
-## ⚙️ Configuration
+##  Configuration
 
 ### System Constants
 Located in `/constants/` package:
@@ -346,7 +346,7 @@ NOTIFICATION_PREFIX = "NT"
 - Required field validation
 - Role selection validation
 
-## 🧪 Testing
+##  Testing
 
 ### Demo Data
 The system includes comprehensive demo data:
@@ -378,57 +378,3 @@ The system includes comprehensive demo data:
    - View system statistics
    - Manage user accounts
 
-## 🤝 Contributing
-
-### Development Guidelines
-1. **Code Style**: Follow Java naming conventions
-2. **Comments**: Add meaningful comments for complex logic
-3. **Error Handling**: Implement proper exception handling
-4. **Validation**: Validate all user inputs
-5. **Testing**: Test all new functionality
-
-### Adding New Features
-1. Create corresponding interface in `/business/`
-2. Implement the service class
-3. Add data models in `/bean/` if needed
-4. Update client interfaces
-5. Add demo data if required
-6. Update documentation
-
-## 📄 License
-
-This project is part of the JEDI CHI Development Program and is intended for educational purposes.
-
-## 📞 Support
-
-For technical support or questions:
-- Check the existing documentation
-- Review the code comments
-- Test with provided demo data
-
-## 🔮 Future Enhancements
-
-### Planned Features
-- **Database Integration**: Replace in-memory storage with persistent database
-- **Web Interface**: Develop web-based UI
-- **Payment Integration**: Add payment processing
-- **Mobile App**: Create mobile application
-- **Advanced Analytics**: Enhanced reporting and analytics
-- **Email Notifications**: Replace console notifications with email
-- **Multi-city Support**: Expand to multiple cities
-- **API Development**: RESTful API for external integrations
-
-### Technical Improvements
-- **Spring Boot Integration**: Modernize the framework
-- **Security Enhancement**: Add JWT authentication
-- **Performance Optimization**: Improve data access patterns
-- **Unit Testing**: Add comprehensive test suite
-- **Docker Support**: Containerize the application
-
----
-
-**Version**: 1.0.0  
-**Last Updated**: January 2026  
-**Framework**: Core Java  
-**Architecture**: 3-Tier Architecture  
-**Data Storage**: In-memory (Java Collections)
