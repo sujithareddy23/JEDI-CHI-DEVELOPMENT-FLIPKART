@@ -71,6 +71,12 @@ public class GymApplicationClient {
 
     private static void loginMenu(Scanner in) {
         System.out.println("\n--- Login ---");
+        System.out.println("Select Role: 1. GymAdmin 2. GymCustomer 3. GymOwner");
+        int roleChoice = readInt(in);
+        consumeLine(in);
+        ValidationResult rr = InputValidation.validateRoleChoice(roleChoice);
+        if (!rr.isValid()) { System.out.println(rr.getFirstError()); return; }
+        
         System.out.print("Username: ");
         String username = in.nextLine().trim();
         System.out.print("Password: ");
@@ -79,11 +85,6 @@ public class GymApplicationClient {
         if (!ur.isValid()) { System.out.println(ur.getFirstError()); return; }
         ValidationResult pr = InputValidation.isNotBlank(password, "Password");
         if (!pr.isValid()) { System.out.println(pr.getFirstError()); return; }
-        System.out.println("Select Role: 1. GymAdmin 2. GymCustomer 3. GymOwner");
-        int roleChoice = readInt(in);
-        consumeLine(in);
-        ValidationResult rr = InputValidation.validateRoleChoice(roleChoice);
-        if (!rr.isValid()) { System.out.println(rr.getFirstError()); return; }
 
         try {
             UserServiceInterface userService = new UserServiceImpl();
