@@ -14,7 +14,7 @@ public class DatabaseUtil {
     // Database configuration constants
     private static final String DB_URL = "jdbc:mysql://localhost:3306/flipfit_gym";
     private static final String DB_USERNAME = "root";
-    private static final String DB_PASSWORD = "Nitheez@iiit1";
+    private static final String DB_PASSWORD = "";
     
     // JDBC driver class
     private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
