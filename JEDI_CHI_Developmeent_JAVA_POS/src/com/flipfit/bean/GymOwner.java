@@ -1,13 +1,33 @@
 package com.flipfit.bean;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "gym_owners")
 public class GymOwner {
+    @Id
+    @Column(name = "id")
     private String id;
+    
+    @Column(name = "owner_name")
     private String ownerName;
+    
+    @Column(name = "email_id")
     private String emailId;
+    
+    @Column(name = "password")
     private String password;
+    
+    @Column(name = "id_proof")
     private String idProof;
+    
+    @Column(name = "pan_no")
     private String panNo;
+    
+    @Column(name = "gst_no")
     private String gstNo;
+    
+    @Column(name = "validated")
     private boolean validated;
 
     public String getId() { return id; }

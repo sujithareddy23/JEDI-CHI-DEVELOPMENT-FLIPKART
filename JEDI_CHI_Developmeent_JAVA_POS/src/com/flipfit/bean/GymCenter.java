@@ -1,14 +1,33 @@
 package com.flipfit.bean;
 
+import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 
+@Entity
+@Table(name = "gym_centers")
 public class GymCenter {
+    @Id
+    @Column(name = "gym_id")
     private String gymId;
+    
+    @Column(name = "name")
     private String name;
+    
+    @Column(name = "location")
     private String location;  // city or area, e.g. "Bangalore - Bellandur"
+    
+    @Column(name = "contact_no")
     private String contactNo;
+    
+    @Column(name = "owner_id")
     private String ownerId;
+    
+    @Column(name = "validated")
     private boolean validated;
+    
+    @OneToMany(mappedBy = "gymCenter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Slot> slotList;
 
     public String getGymId() { return gymId; }

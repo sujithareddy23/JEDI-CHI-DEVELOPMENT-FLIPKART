@@ -1,12 +1,25 @@
 package com.flipfit.bean;
 
+import javax.persistence.*;
 import java.time.Instant;
 
+@Entity
+@Table(name = "notifications")
 public class Notification {
+    @Id
+    @Column(name = "notification_id")
     private String notificationId;
+    
+    @Column(name = "customer_id")
     private String customerId;
+    
+    @Column(name = "message")
     private String message;
+    
+    @Column(name = "timestamp")
     private Instant timestamp;
+    
+    @Column(name = "is_read")
     private boolean read;
 
     public String getNotificationId() { return notificationId; }
